@@ -15,7 +15,7 @@ var checkPointTime = 0
 
 # the starting room, this is loaded on game resets, you may want to change this
 var startScene = preload("res://Scene/Presentation/Continue.tscn")
-var currentZone
+var currentZone = ""
 var nextZone = preload("res://Scene/Zones/BaseZone.tscn") # change this to the first level in the game (also set in "reset_values")
 # use this to store the current state of the room, changing scene will clear everythin
 var stageInstanceMemory = null
@@ -53,7 +53,7 @@ var soundChannel = AudioStreamPlayer.new()
 
 # Gameplay values
 var score = 0
-var lives = 3
+var lives = 3 
 var continues = 0
 # emeralds use bitwise flag operations, the equivelent for 7 emeralds would be 128
 var emeralds = 0

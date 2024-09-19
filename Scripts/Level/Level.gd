@@ -2,7 +2,7 @@ extends Node2D
 
 @export var music = preload("res://Audio/Soundtrack/6. SWD_TLZa1.ogg")
 @export var nextZone = preload("res://Scene/Zones/BaseZone.tscn")
-@onready var currentZone = get_tree().get_current_scene()
+@onready var currentZone = self.name
 
 @export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var animal1 = 0
 @export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var animal2 = 1
@@ -23,7 +23,6 @@ var wasLoaded = false
 
 func _ready():
 	Global.currentZone = currentZone
-	print(Global.currentZone)
 	# debuging
 	if !Global.is_main_loaded:
 		return false
