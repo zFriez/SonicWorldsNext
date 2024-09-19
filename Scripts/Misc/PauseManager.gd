@@ -81,10 +81,14 @@ func _input(event):
 			MENUS.OPTIONS: # options menu
 				match(option): # Options
 					3: # full screen
-						get_window().mode = Window.MODE_EXCLUSIVE_FULLSCREEN if (!((get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN) or (get_window().mode == Window.MODE_FULLSCREEN))) else Window.MODE_MAXIMIZED
-						# update text
-						$PauseMenu/VBoxContainer.get_child(option+1).get_child(0).text = update_text(option+1)
-						$PauseMenu/VBoxContainer.get_child(option).get_child(0).text = update_text(option)
+						if (Global.screen_fix == true):
+							get_window().mode = Window.MODE_EXCLUSIVE_FULLSCREEN if (!((get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN) or (get_window().mode == Window.MODE_FULLSCREEN))) else Window.MODE_MAXIMIZED
+							# update text
+							$PauseMenu/VBoxContainer.get_child(option+1).get_child(0).text = update_text(option+1)
+							$PauseMenu/VBoxContainer.get_child(option).get_child(0).text = update_text(option)
+						else:
+							get_window().mode = Window.MODE_EXCLUSIVE_FULLSCREEN if (!((get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN) or (get_window().mode == Window.MODE_FULLSCREEN))) else Window.MODE_WINDOWED
+							$PauseMenu/VBoxContainer.get_child(option+1).get_child(0).text = update_text(option+1)
 					4: # control menu
 						Global.save_settings()
 						set_menu(0)
@@ -156,12 +160,16 @@ func do_lateral_input():
 					soundStepDelay -= 0.1
 			2: # Scale
 				if inputCue.x != 0 and inputCue != lastInput:
-					if (get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN or get_window().mode == Window.MODE_FULLSCREEN):
-						$PauseMenu/VBoxContainer.get_child(option).get_child(0).text = update_text(option)
-					elif (get_window().mode == Window.MODE_MAXIMIZED):
-						Global.zoomSize = clamp(Global.zoomSize+inputDir,zoomClamp[0],zoomClamp[1])
-						get_window().mode = Window.MODE_WINDOWED
-						get_window().set_size(get_viewport().get_visible_rect().size*Global.zoomSize)
+					if (Global.screen_fix == true):
+						if (get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN or get_window().mode == Window.MODE_FULLSCREEN):
+							$PauseMenu/VBoxContainer.get_child(option).get_child(0).text = update_text(option)
+						elif (get_window().mode == Window.MODE_MAXIMIZED):
+							Global.zoomSize = clamp(Global.zoomSize+inputDir,zoomClamp[0],zoomClamp[1])
+							get_window().mode = Window.MODE_WINDOWED
+							get_window().set_size(get_viewport().get_visible_rect().size*Global.zoomSize)
+						else:
+							Global.zoomSize = clamp(Global.zoomSize+inputDir,zoomClamp[0],zoomClamp[1])
+							get_window().set_size(get_viewport().get_visible_rect().size*Global.zoomSize)
 					else:
 						Global.zoomSize = clamp(Global.zoomSize+inputDir,zoomClamp[0],zoomClamp[1])
 						get_window().set_size(get_viewport().get_visible_rect().size*Global.zoomSize)
@@ -210,9 +218,12 @@ func update_text(textRow = 0):
 		2: # Music
 			return "music "+str(round(((AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music"))-clampSounds[0])/(abs(clampSounds[0])+abs(clampSounds[1])))*100))
 		3: # Scale
-			if (get_window().mode == Window.MODE_FULLSCREEN or get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN):
-				return "scaled"
-			elif (get_window().mode == Window.MODE_WINDOWED or get_window().mode == Window.MODE_MAXIMIZED):
+			if (Global.screen_fix == true):
+				if (get_window().mode == Window.MODE_FULLSCREEN or get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN):
+					return "scaled"
+				elif (get_window().mode == Window.MODE_WINDOWED or get_window().mode == Window.MODE_MAXIMIZED):
+					return "scale x"+str(Global.zoomSize)
+			else:
 				return "scale x"+str(Global.zoomSize)
 		4: # Full screen
 			return "full screen "+onOff[int(((get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN) or (get_window().mode == Window.MODE_FULLSCREEN)))]

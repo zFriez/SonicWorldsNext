@@ -100,6 +100,8 @@ enum HAZARDS {NORMAL, FIRE, ELEC, WATER}
 
 # Debugging
 var is_main_loaded = false
+# Screen fix for further debugging
+var screen_fix = false
 
 func _ready():
 	# set sound settings
